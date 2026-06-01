@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>🍊 Orange Chat 🍊</title>
+    <style>
+        :root {
+            --primary-orange: #ff7a18;
+            --soft-orange: #fff0e6;
+            --pastel-orange: #ffb380;
+            --dark-orange: #e65c00;
+        }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            background: linear-gradient(135deg, var(--soft-orange), #ffffff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #login-screen {
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(255, 122, 24, 0.15);
+            text-align: center;
+            border: 4px solid var(--primary-orange);
+        }
+        #login-screen h2 {
+            color: var(--primary-orange);
+            font-size: 28px;
+            margin: 0 0 15px 0;
+        }
+        #login-screen input {
+            padding: 12px 20px;
+            margin-bottom: 15px;
+            border-radius: 30px;
+            border: 2px solid var(--pastel-orange);
+            outline: none;
+            font-size: 16px;
+            text-align: center;
+            width: 80%;
+        }
+        #login-screen button, .cute-btn {
+            background: var(--primary-orange);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        #app-container {
+            display: none;
+            width: 92vw;
+            height: 88vh;
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(255, 122, 24, 0.15);
+            border: 3px solid var(--primary-orange);
+        }
+        #sidebar {
+            width: 32%;
+            background: #fff9f5;
+            border-right: 3px solid var(--primary-orange);
+            display: flex;
+            flex-direction: column;
+        }
+        .search-box {
+            padding: 20px 15px;
+            background: var(--primary-orange);
+            display: flex;
+            gap: 8px;
+        }
+        .search-box input {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border-radius: 20px;
+            border: none;
+            outline: none;
+        }
+        #contact-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .contact-item {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--soft-orange);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .contact-item:hover {
+            background: var(--soft-orange);
+        }
+        .delete-x {
+            color: #ff4d4d;
+            font-weight: bold;
+            display: none;
+            cursor: pointer;
+            background: #ffe6e6;
+            padding: 2px 8px;
+            border-radius: 50%;
+        }
+        .contact-item:hover .delete-x {
+            display: inline-block;
+        }
+        #settings-bar {
+            padding: 15px;
+            border-top: 2px solid var(--pastel-orange);
+            background: var(--soft-orange);
+        }
+        .settings-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--dark-orange);
+            cursor: pointer;
+        }
+        #chat-area {
+            width: 68%;
+            display: flex;
+            flex-direction: column;
+            background: #ffffff;
+        }
+        #chat-header {
+            background: var(--primary-orange);
+            color: white;
+            padding: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+        #messages {
+            flex-grow: 1;
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .message-bubble {
+            padding: 12px 18px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            max-width: 55%;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        .sent {
+            background: linear-gradient(135deg, var(--primary-orange), var(--dark-orange));
+            color: white;
+            align-self: flex-end;
+        }
+        .received {
+            background: #f1f1f1;
+            color: #333;
+            align-self: flex-start;
+        }
+        #input-area {
+            padding: 20px;
+            display: flex;
+            border-top: 2px solid var(--soft-orange);
+        }
+        #input-area input {
+            flex-grow: 1;
+            padding: 12px 20px;
+            border-radius: 30px;
+            border: 2px solid var(--pastel-orange);
+            outline: none;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 24px;
+            border: 4px solid var(--primary-orange);
+            z-index: 100;
+            text-align: center;
+        }
+        .modal button {
+            display: block;
+            width: 100%;
+            margin: 12px 0;
+        }
+        .explosion-particle {
+            position: fixed;
+            font-size: 32px;
+            pointer-events: none;
+            z-index: 1000;
+            animation: explode 1.2s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+        }
+        @keyframes explode {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) scale(0) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <h2>🍊 Orange Chat 🍊</h2>
+        <input type="text" id="username-input" placeholder="Enter your username">
+        <button onclick="login()">Enter App</button>
+    </div>
+
+    <div id="app-container">
+        <div id="sidebar">
+            <div class="search-box">
+                <input type="text" id="search-users" placeholder="🔍 Search username...">
+                <button class="cute-btn" onclick="addContactFromSearch()">Add</button>
+            </div>
+            <ul id="contact-list"></ul>
+            <div id="settings-bar">
+                <button class="settings-btn" onclick="toggleModal('settings-modal')">⚙️ Settings</button>
+            </div>
+        </div>
+
+        <div id="chat-area">
+            <div id="chat-header">Chat Rooms</div>
+            <div id="messages"></div>
+            <div id="input-area">
+                <input type="text" id="msg-input" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+                <button class="cute-btn" style="margin-left:10px;" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="settings-modal" class="modal">
+        <h3 style="color: var(--dark-orange); margin-top:0;">⚙️ Settings</h3>
+        <button class="cute-btn" onclick="changeUsername()">Change Username</button>
+        <button class="cute-btn" style="background:#ff944d" onclick="manageBlocks()">Block / Unblock Users</button>
+        <button class="cute-btn" style="background:#ff4d4d;" onclick="deleteAccount()">Delete Account Permanently</button>
+        <button class="cute-btn" style="background:#999;" onclick="toggleModal('settings-modal')">Close Menu</button>
+    </div>
+
+    <script>
+        let myUsername = "";
+        let activeChatPartner = "Main Class Group (30/30)";
+        let contactList = new Set(["Main Class Group (30/30)"]);
+        let deletedContacts = new Set();
+        let blockedUsers = new Set();
+
+        function login() {
+            const input = document.getElementById('username-input').value.trim();
+            if(!input) return alert("Please type a username first!");
+            myUsername = input;
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app-container').style.display = 'flex';
+            openChat("Main Class Group (30/30)");
+            renderContacts();
+        }
+
+        function addContactFromSearch() {
+            const target = document.getElementById('search-users').value.trim();
+            if (!target || target.toLowerCase() === myUsername.toLowerCase()) return;
+            contactList.add(target);
+            if (deletedContacts.has(target)) deletedContacts.delete(target);
+            renderContacts();
+            document.getElementById('search-users').value = "";
+        }
+
+        function renderContacts() {
+            const listElement = document.getElementById('contact-list');
+            listElement.innerHTML = "";
+            contactList.forEach(user => {
+                if (deletedContacts.has(user) || blockedUsers.has(user)) return;
+                const li = document.createElement('li');
+                li.className = 'contact-item';
+                li.innerHTML = `<span onclick="openChat('${user}')">🍊 ${user}</span><span class="delete-x" onclick="deleteContact(event, '${user}')">✕</span>`;
+                listElement.appendChild(li);
+            });
+        }
+
+        function deleteContact(event, username) {
+            event.stopPropagation();
+            deletedContacts.add(username);
+            if(activeChatPartner === username) {
+                document.getElementById('chat-header').textContent = "Chat Rooms";
+                document.getElementById('messages').innerHTML = "";
+                activeChatPartner = "";
+            }
+            renderContacts();
+        }
+function openChat(username) {activeChatPartner = username;document.getElementById('chat-header').textContent = Chat Rooms - ${username};document.getElementById('messages').innerHTML = "";appendMessage(System: Welcome to ${username}!, 'received');}function sendMessage() {const input = document.getElementById('msg-input');const text = input.value.trim();if(!text || !activeChatPartner) return;appendMessage(${myUsername}: ${text}, 'sent');input.value = "";if(text.toLowerCase() === "go orford") {triggerOrangeExplosion();}}function handleKeyPress(e) {if(e.key === 'Enter') sendMessage();}function appendMessage(text, type) {const container = document.getElementById('messages');const bubble = document.createElement('div');bubble.className = message-bubble ${type};bubble.textContent = text;bubble.onclick = () => bubble.remove();container.appendChild(bubble);container.scrollTop = container.scrollHeight;}function triggerOrangeExplosion() {const emojis = ['🍊', '🍊', '🔸', '✨', '💥', '🎃', '🍊'];for(let i=0; i<50; i++) {const particle = document.createElement('div');particle.className = 'explosion-particle';particle.textContent = emojis[Math.floor(Math.random() * emojis.length)];const xVal = (Math.random() - 0.5) * 600;const yVal = (Math.random() - 0.5) * 600;particle.style.setProperty('--x', ${xVal}px);particle.style.setProperty('--y', ${yVal}px);particle.style.left = '50vw';particle.style.top = '50vh';document.body.appendChild(particle);setTimeout(() => particle.remove(), 1200);}}// Window Controlfunction toggleModal(id) {const m = document.getElementById(id);m.style.display = m.style.display === 'block' ? 'none' : 'block';}function changeUsername() {const name = prompt("Enter your new username:");if (name) {myUsername = name;alert(Username updated to: ${name}!);}}// Settings actions Window Controlfunction manageBlocks() {const target = prompt("Enter username to Block or Unblock:");if(!target) return;if(blockedUsers.has(target)) {blockedUsers.delete(target);alert(${target} has been unblocked!);} else {blockedUsers.add(target);alert(🚫 ${target} is now blocked.);}renderContacts();}function deleteAccount() {if(confirm("Wipe account profile and delete all memory permanently?")) {window.location.reload();}}
